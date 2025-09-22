@@ -1,7 +1,7 @@
 
-### Obiettivo progetto 
+# Obiettivo progetto 
 Implementare in linguaggio Java un sistema che consenta di cercare, in modo efficiente e affidabile, tutte le occorrenze di un pattern fornito in input, restituendo tutte le posizioni nel testo in cui esso compare. Per raggiungere questo obiettivo si è utilizzato un algoritmo KMP (Knuth-Morris-Pratt): un algoritmo di pattern matching progettato per trovare occorrenze di un pattern $P$ di lunghezza $m$ all'interno di un testo $T$ di lunghezza $n$, con $n \gg m$.
-##### Motivazione scelta dell'algoritmo KMP 
+### Motivazione scelta dell'algoritmo KMP 
 Il principale vantaggio di questo algoritmo è la sua capacità di scansionare il testo in modo intelligente senza riconsiderare i caratteri del testo già esaminati in caso di mismatch con il pattern. Questo accorgimento permette di ottenere una complessità computazionale lineare $O(n+m)$, rispetto all'approccio brute-force in cui la riesaminazione dei caratteri comporta un costo computazionale di $O(mn)$ confronti. 
 ### Requisiti 
 1. Efficienza per testi molto lunghi.
@@ -21,7 +21,7 @@ Per queste ragioni, è stato preferito un approccio alternativo che simula il co
 - Complessità spaziale pari a $O(m)$
 - Ogni indice i contiene la lungheza del massimo prefisso-suffisso, simulando in modo efficiente le transizioni del DFA in caso di mismatch
 
-### Funzionamento dell’algoritmo KMP con array LPS
+# Funzionamento dell’algoritmo KMP con array LPS
 L’algoritmo KMP opera in due fasi principali:
 1. **Preprocessing del pattern (costruzione dell’array LPS):**  
    In questa fase, viene calcolato per ciascun carattere del pattern il valore LPS corrispondente, ovvero la lunghezza del prefisso più lungo che è anche un suffisso della sottostringa considerata. Questo array consente di evitare, durante la fase di confronto, di riesaminare caratteri già confrontati precedentemente in caso di mismatch.
@@ -29,19 +29,19 @@ L’algoritmo KMP opera in due fasi principali:
 2. **Ricerca nel testo:**  
    Si scorre il testo carattere per carattere, confrontandolo con il pattern. In caso di corrispondenza si avanza; in caso di mismatch, l’array LPS permette di saltare direttamente alla posizione utile successiva nel pattern, riducendo drasticamente i confronti.
 
-#### Gestione pattern sovrapposti
+### Gestione pattern sovrapposti
 Un elemento particolarmente interessante è la gestione automatica dei pattern sovrapposti. Dopo che un’occorrenza completa del pattern è stata trovata, l’algoritmo non riparte da zero, ma utilizza ancora una volta l’array LPS per determinare se ci sono porzioni del pattern già verificate che possono corrispondere a una nuova occorrenza che inizia prima della fine di quella appena riconosciuta. Questo meccanismo consente di rilevare pattern anche in presenza di sovrapposizioni.
 Questo è reso possibile dall’istruzione $j = lps[j - 1]$, che aggiorna correttamente l’indice `j` nel pattern per continuare il confronto da un punto coerente, senza tornare all’inizio.
 
 ### Gestione case-sensitive
 L'algoritmo KMP è già di per se case-sensitive in quanto il codice confronta i codici Unicode e non apporta trasformazioni alle stringhe prese in analisi: $text.charAt(i) == pattern.charAt(j)$
 
-### Struttura del programma
+# Struttura del programma
 Il progetto è composto da due classi principali:
 - `KMPMatcher`: implementa l’algoritmo KMP. La funzione computeLPSArray() costruisce l’array LPS, mentre la funzione search() esegue la ricerca vera e propria all’interno del testo e restituisce una lista delle posizioni in cui il pattern compare.
 - `Main`: gestisce l’interazione con l’utente. Richiede in input il pattern da cercare, legge un file di testo, esegue la ricerca tramite `KMPMatcher` e stampa le posizioni trovate.
 
-##### `computeLPSArray()`
+### `computeLPSArray()`
 Questo metodo calcola per ciascun carattere del pattern il valore LPS corrispondente:
 - $len$: rappresenta la lunghezza del prefisso-suffisso più lungo trovato finora
 - $i$: indice per scorrere il pattern partendo dal secondo carattere ($i = 1$)
@@ -50,7 +50,7 @@ Il cuore dell'algoritmo di preprocessing è il ciclo $while (i < m)$ che gestisc
 - Match: quando $pattern.charAt(i) == pattern.charAt(len)$, si incrementa $len$ e si assegna $lps[i] = len$
 - Mismatch: quando i caratteri non corrispondono, si utilizza il "salto intelligente" con $len = lps[len - 1]$ invece di ricominciare da capo
 
-##### `search(String text, String pattern)`
+### `search(String text, String pattern)`
 Il codice utilizza due indici: $i$ per scorrere il testo, $j$ per scorrere il pattern. All'inizio del metodo si effettua il controllo dei casi limite:
 - Pattern vuoto: $m == 0$ restituisce una lista vuota
 - Testo vuoto: $n == 0$ restituisce una lista vuota
@@ -65,7 +65,7 @@ Il ciclo principale `while (i < n)` gestisce tre scenari:
 2. Pattern completo trovato: $j == m$. Si aggiunge la posizione $i - j$ alla lista risultati
 3. Mismatch: si utilizza l'array LPS per il salto con $j = lps[j - 1]$
 
-### Complessità temporale
+# Complessità temporale
 Dal codice visto precedentemente possiamo fare le seguenti considerazioni: 
 
 Durante la fase di costruzione dell'array LPS:
@@ -79,7 +79,7 @@ Durante la fase di ricerca:
 
 Complessità temprale totale pari a: $O(n+m)$
 
-### Complessità spaziale 
+# Complessità spaziale 
 L’unico spazio ausiliario significativo ai fini dell'algoritmo è l’array $lps[]$ di dimensione $m$, da cui deriva una complessità spaziale pari a $O(m)$.
 
 Inoltre, se consideriamo anche l'output, il programma utilizza una lista per memorizzare le posizioni dei match trovati; possiamo considerare una complessità spaziale di $O(k)$, dove $k$ corrisponde al numero di match trovati. Nel caso pessimo $k = n$.
